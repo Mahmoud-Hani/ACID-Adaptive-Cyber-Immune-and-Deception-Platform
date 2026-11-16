@@ -1,0 +1,5 @@
+﻿vm_name,role,os,image_or_version,network_adapter,static_ip,services_or_purpose,owner,status,security_notes
+Kali,Attacker,Kali Linux,Prepared VM,VirtualBox Host-Only Ethernet Adapter,10.10.10.20,Authorized Port Scan and SSH Brute Force test client,Red Team,ready,No Internet route observed during isolation check
+Debian,Victim,Debian 12,VDI,VirtualBox Host-Only Ethernet Adapter,10.10.10.30,SSH target and Nginx HTTP service,Red Team,ready,Test account exists locally; credentials are not documented in Git
+Sensor,Sensor,Zeek/Suricata sensor,To be provisioned,VirtualBox Host-Only Ethernet Adapter,10.10.10.10,Future telemetry capture and sensor logs,Blue Team,planned,Sensor validation will happen in Week 2
+VirtualBox Host-Only,Gateway,VirtualBox host-only network,Host machine adapter,VirtualBox Host-Only Ethernet Adapter,10.10.10.1,Isolated lab connectivity,Red Team,verified,Internet access is not required for the lab
