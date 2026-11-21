@@ -1,0 +1,10 @@
+{
+    "indicator": "192.0.2.99",
+    "match": false,
+    "source": "offline-fixture",
+    "tags": [],
+    "confidence": 0.0,
+    "fetched_at": "2026-11-20T12:00:00Z",
+    "stale": true,
+    "error": "CTI_PROVIDER_OFFLINE: Upstream threat feed unreachable"
+}
