@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\app\ACID.Domain\ACID.Domain.csproj" />
+    <ProjectReference Include="..\ACID.Application\ACID.Application.csproj" />
+    <ProjectReference Include="..\ACID.Domain\ACID.Domain.csproj" />
   </ItemGroup>
 
 </Project>
