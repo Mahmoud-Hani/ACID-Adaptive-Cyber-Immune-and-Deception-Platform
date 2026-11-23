@@ -1,0 +1,55 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ACID Event",
+  "type": "object",
+  "required": [
+    "event_id",
+    "timestamp",
+    "event_type",
+    "source"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "event_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "src_ip": {
+      "type": ["string", "null"],
+      "format": "ipv4"
+    },
+    "dst_ip": {
+      "type": ["string", "null"],
+      "format": "ipv4"
+    },
+    "src_port": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "dst_port": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "protocol": {
+      "type": ["string", "null"]
+    },
+    "raw_data": {
+      "type": ["object", "null"]
+    }
+  },
+  "additionalProperties": false
+}
