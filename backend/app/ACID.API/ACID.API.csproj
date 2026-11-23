@@ -10,4 +10,9 @@
 		<Version>0.1.0</Version>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\ACID.Application\ACID.Application.csproj" />
+	  <ProjectReference Include="..\ACID.Domain\ACID.Domain.csproj" />
+	</ItemGroup>
+
 </Project>
