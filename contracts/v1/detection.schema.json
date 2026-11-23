@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acid.local/contracts/v1/detection.schema.json",
+  "title": "ACID Detection v1",
+  "description": "Detection result produced by the Blue Team detection engine and ingested by the Backend. Every field is always present.",
+  "type": "object",
+  "required": [
+    "detection_id",
+    "detection_version",
+    "detection_type",
+    "detected_at",
+    "source_ip",
+    "destination_ips",
+    "destination_ports",
+    "window_start",
+    "window_end",
+    "metric",
+    "observed_value",
+    "threshold",
+    "severity",
+    "explanation",
+    "detector_version",
+    "evidence_event_ids"
+  ],
+  "properties": {
+    "detection_id": {
+      "type": "string",
+      "pattern": "^det_[0-9a-f]{32}$",
+      "description": "Deterministic idempotency key: det_ + first 32 hex chars of SHA-256 over detection_type|source_ip|window_start|window_end."
+    },
+    "detection_version": { "const": "1.0" },
+    "detection_type": {
+      "type": "string",
+      "enum": [ "port_scan", "ssh_bruteforce" ]
+    },
+    "detected_at": { "$ref": "#/$defs/utc_timestamp" },
+    "source_ip": { "$ref": "#/$defs/ipv4" },
+    "destination_ips": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ipv4" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "destination_ports": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 65535
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "window_start": { "$ref": "#/$defs/utc_timestamp" },
+    "window_end": { "$ref": "#/$defs/utc_timestamp" },
+    "metric": {
+      "type": "string",
+      "enum": [ "unique_destination_ports", "failed_auth_attempts" ]
+    },
+    "observed_value": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "threshold": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "severity": {
+      "type": "string",
+      "enum": [ "low", "medium", "high", "critical" ]
+    },
+    "explanation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "description": "Human-readable why text shown to the analyst."
+    },
+    "detector_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "description": "Version of the detection rule, e.g. port_scan-0.1."
+    },
+    "evidence_event_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^evt_[0-9a-f]{32}$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Event v1 IDs that support this detection. Every ID must resolve to a stored Event."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "detection_type": { "const": "port_scan" } } },
+      "then": { "properties": { "metric": { "const": "unique_destination_ports" } } }
+    },
+    {
+      "if": { "properties": { "detection_type": { "const": "ssh_bruteforce" } } },
+      "then": { "properties": { "metric": { "const": "failed_auth_attempts" } } }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ipv4": {
+      "type": "string",
+      "format": "ipv4",
+      "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$"
+    },
+    "utc_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    }
+  }
+}
