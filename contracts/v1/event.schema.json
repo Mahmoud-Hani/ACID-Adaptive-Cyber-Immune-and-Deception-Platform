@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acid.local/contracts/v1/event.schema.json",
+  "title": "ACID Event v1",
+  "description": "Normalized network event produced by the Blue Team parser and ingested by the Backend. Every field is always present; unknown or not-applicable values are null.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_version",
+    "timestamp",
+    "event_type",
+    "source_ip",
+    "source_port",
+    "destination_ip",
+    "destination_port",
+    "protocol",
+    "icmp_type",
+    "icmp_code",
+    "service",
+    "sensor",
+    "sensor_id",
+    "duration",
+    "source_packets",
+    "destination_packets",
+    "source_bytes",
+    "destination_bytes",
+    "outcome",
+    "username",
+    "raw_ref",
+    "pcap_reference"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9a-f]{32}$",
+      "description": "Deterministic idempotency key: evt_ + first 32 hex chars of SHA-256 over sensor_id|timestamp|source_ip|source_port|destination_ip|destination_port|protocol|event_type. Null values are hashed as empty strings."
+    },
+    "event_version": { "const": "1.0" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$",
+      "description": "Event time in UTC with Z suffix."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [ "network_connection", "authentication_attempt" ]
+    },
+    "source_ip": { "$ref": "#/$defs/ipv4" },
+    "source_port": { "$ref": "#/$defs/port" },
+    "destination_ip": { "$ref": "#/$defs/ipv4" },
+    "destination_port": {
+      "$ref": "#/$defs/port",
+      "description": "Required for tcp/udp. Null for icmp."
+    },
+    "protocol": {
+      "type": "string",
+      "enum": [ "tcp", "udp", "icmp" ],
+      "description": "Transport protocol, lowercase."
+    },
+    "icmp_type": {
+      "$ref": "#/$defs/icmp_value",
+      "description": "ICMP message type (Zeek id.orig_p, Suricata icmp_type). Null unless protocol is icmp."
+    },
+    "icmp_code": {
+      "$ref": "#/$defs/icmp_value",
+      "description": "ICMP message code (Zeek id.resp_p, Suricata icmp_code). Null unless protocol is icmp."
+    },
+    "service": {
+      "type": [ "string", "null" ],
+      "maxLength": 32,
+      "description": "Application protocol detected by the sensor, e.g. ssh."
+    },
+    "sensor": {
+      "type": "string",
+      "enum": [ "zeek", "suricata" ]
+    },
+    "sensor_id": {
+      "type": "string",
+      "pattern": "^(zeek|suricata)-\\d{2}$"
+    },
+    "duration": {
+      "type": [ "number", "null" ],
+      "minimum": 0,
+      "description": "Seconds. Null when unavailable, e.g. single-packet connections."
+    },
+    "source_packets": { "$ref": "#/$defs/counter" },
+    "destination_packets": { "$ref": "#/$defs/counter" },
+    "source_bytes": { "$ref": "#/$defs/counter" },
+    "destination_bytes": { "$ref": "#/$defs/counter" },
+    "outcome": {
+      "type": [ "string", "null" ],
+      "enum": [ "success", "failure", null ],
+      "description": "Authentication result. Required non-null for authentication_attempt; null otherwise."
+    },
+    "username": {
+      "type": [ "string", "null" ],
+      "maxLength": 64,
+      "description": "Lab account name only. Passwords are never part of this contract."
+    },
+    "raw_ref": {
+      "type": "string",
+      "pattern": "^(zeek|suricata)://[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+#line-\\d+$",
+      "maxLength": 512,
+      "description": "e.g. zeek://scan_01/conn.log#line-101"
+    },
+    "pcap_reference": {
+      "type": [ "string", "null" ],
+      "maxLength": 512
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "event_type": { "const": "authentication_attempt" } }
+      },
+      "then": {
+        "properties": {
+          "outcome": { "type": "string" },
+          "service": { "const": "ssh" }
+        }
+      },
+      "else": {
+        "properties": {
+          "outcome": { "const": null },
+          "username": { "const": null }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "protocol": { "enum": [ "tcp", "udp" ] } }
+      },
+      "then": {
+        "properties": {
+          "destination_port": { "type": "integer" },
+          "icmp_type": { "const": null },
+          "icmp_code": { "const": null }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "protocol": { "const": "icmp" } }
+      },
+      "then": {
+        "properties": {
+          "source_port": { "const": null },
+          "destination_port": { "const": null },
+          "icmp_type": { "type": "integer" },
+          "icmp_code": { "type": "integer" },
+          "event_type": { "const": "network_connection" }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ipv4": {
+      "type": "string",
+      "format": "ipv4",
+      "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$"
+    },
+    "port": {
+      "type": [ "integer", "null" ],
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "icmp_value": {
+      "type": [ "integer", "null" ],
+      "minimum": 0,
+      "maximum": 255
+    },
+    "counter": {
+      "type": [ "integer", "null" ],
+      "minimum": 0,
+      "description": "Null when the sensor does not report it. Never 0 for unknown."
+    }
+  }
+}
