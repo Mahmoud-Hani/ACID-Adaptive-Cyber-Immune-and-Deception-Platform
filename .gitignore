@@ -5,3 +5,6 @@ obj/
 *.user
 .vs/
 TestResults/
+# --- Python ---
+__pycache__/
+.pytest_cache/
