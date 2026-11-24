@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acid.local/contracts/v1/enrichment.schema.json",
+  "title": "ACID CTI Enrichment Response v1",
+  "description": "Response of the CTI service (POST /enrich), consumed by the Backend. Every field is always present. When error is not null, the match result is unknown and match/confidence are null.",
+  "type": "object",
+  "required": [
+    "indicator",
+    "match",
+    "source",
+    "tags",
+    "confidence",
+    "fetched_at",
+    "stale",
+    "error"
+  ],
+  "properties": {
+    "indicator": {
+      "type": "string",
+      "format": "ipv4",
+      "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$"
+    },
+    "match": {
+      "type": [ "boolean", "null" ],
+      "description": "true = indicator found, false = not found (not proof of benign), null = unknown (provider error)."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Provider name, e.g. offline-fixture."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "uniqueItems": true
+    },
+    "confidence": {
+      "type": [ "number", "null" ],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Provider confidence in the match, 0 to 1. Null when unknown."
+    },
+    "fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "stale": {
+      "type": "boolean",
+      "description": "True when the data may be outdated (cache past freshness threshold or provider unreachable)."
+    },
+    "error": {
+      "type": [ "string", "null" ],
+      "maxLength": 500,
+      "description": "Provider error message. Null on success."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "error": { "type": "string" } },
+        "required": [ "error" ]
+      },
+      "then": {
+        "properties": {
+          "match": { "const": null },
+          "confidence": { "const": null },
+          "tags": { "maxItems": 0 }
+        }
+      },
+      "else": {
+        "properties": {
+          "match": { "type": "boolean" }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

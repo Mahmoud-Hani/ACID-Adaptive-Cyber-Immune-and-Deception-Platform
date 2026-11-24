@@ -1,0 +1,10 @@
+{
+  "indicator": "8.8.8.8",
+  "match": false,
+  "source": "offline-fixture",
+  "tags": [],
+  "confidence": 0.0,
+  "fetched_at": "2026-11-20T12:00:00Z",
+  "stale": false,
+  "error": null
+}
