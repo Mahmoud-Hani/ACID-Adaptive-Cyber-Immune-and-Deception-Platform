@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acid.local/contracts/v1/mapping.schema.json",
+  "title": "ACID ATT&CK Mapping v1",
+  "description": "ATT&CK mapping result for one Detection, stored by the Backend and aggregated into Incident.techniques. Every field is always present.",
+  "type": "object",
+  "required": [
+    "mapping_version",
+    "detection_id",
+    "detection_type",
+    "status",
+    "attack_version",
+    "mapped_at",
+    "mapped_by",
+    "techniques"
+  ],
+  "properties": {
+    "mapping_version": { "const": "1.0" },
+    "detection_id": {
+      "type": "string",
+      "pattern": "^det_[0-9a-f]{32}$"
+    },
+    "detection_type": {
+      "type": "string",
+      "enum": ["port_scan", "ssh_bruteforce"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["mapped", "insufficient_evidence"],
+      "description": "insufficient_evidence when the available evidence does not support any technique."
+    },
+    "attack_version": {
+      "type": "string",
+      "pattern": "^v\\d+(\\.\\d+)?$",
+      "description": "Pinned ATT&CK version used for validation."
+    },
+    "mapped_at": { "$ref": "#/$defs/utc_timestamp" },
+    "mapped_by": {
+      "type": "string",
+      "enum": ["rule", "analyst"]
+    },
+    "techniques": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/attack_mapping" }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "mapped" } } },
+      "then": { "properties": { "techniques": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "insufficient_evidence" } } },
+      "then": { "properties": { "techniques": { "maxItems": 0 } } }
+    },
+    {
+      "if": { "properties": { "detection_type": { "const": "port_scan" } } },
+      "then": {
+        "properties": {
+          "techniques": {
+            "items": { "properties": { "technique_id": { "const": "T1046" } } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "detection_type": { "const": "ssh_bruteforce" } } },
+      "then": {
+        "properties": {
+          "techniques": {
+            "items": { "properties": { "technique_id": { "enum": ["T1110", "T1110.001"] } } }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "utc_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9a-f]{32}$"
+    },
+    "attack_mapping": {
+      "type": "object",
+      "description": "Must stay identical to incident.schema.json#/$defs/attack_mapping.",
+      "required": [
+        "technique_id",
+        "technique_name",
+        "tactic_id",
+        "tactic_name",
+        "confidence",
+        "reason",
+        "evidence_event_ids",
+        "validation_status"
+      ],
+      "properties": {
+        "technique_id": {
+          "type": "string",
+          "enum": ["T1046", "T1110", "T1110.001"]
+        },
+        "technique_name": { "type": "string", "minLength": 1 },
+        "tactic_id": {
+          "type": "string",
+          "enum": ["TA0006", "TA0007"]
+        },
+        "tactic_name": { "type": "string", "minLength": 1 },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "reason": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "evidence_event_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/event_id" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": ["pending_analyst_validation", "approved", "rejected"]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "technique_id": { "const": "T1046" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Network Service Discovery" },
+              "tactic_id": { "const": "TA0007" },
+              "tactic_name": { "const": "Discovery" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "technique_id": { "const": "T1110" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Brute Force" },
+              "tactic_id": { "const": "TA0006" },
+              "tactic_name": { "const": "Credential Access" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "technique_id": { "const": "T1110.001" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Password Guessing" },
+              "tactic_id": { "const": "TA0006" },
+              "tactic_name": { "const": "Credential Access" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}
