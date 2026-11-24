@@ -1,0 +1,1 @@
+"""Shared normalization into ACID Event v1."""
