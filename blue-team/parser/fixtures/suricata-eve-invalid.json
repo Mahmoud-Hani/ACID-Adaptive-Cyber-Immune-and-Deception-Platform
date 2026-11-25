@@ -1,0 +1,6 @@
+{"timestamp":"2025-11-20T12:00:01.120000+0000","flow_id":1,"event_type":"flow","src_ip":"10.10.10.20","src_port":40122,"dest_ip":"10.10.10.30","dest_port":21,"proto":"TCP","flow":{"pkts_toserver":1,"pkts_toclient":0,"bytes_toserver":74,"bytes_toclient":0,"start":"2025-11-20T12:00:01.120000+0000","end":"2025-11-20T12:00:01.120000+0000"}}
+{"timestamp":"2025-11-20T12:00:01.130000+0000","flow_id":2,"event_type":"flow","src_ip":"10.10.10.20"
+{"timestamp":"2025-11-20T12:00:01.140000+0000","flow_id":3,"event_type":"flow","src_ip":"10.10.10.20","src_port":40124,"dest_port":23,"proto":"TCP"}
+{"timestamp":"2025-11-20T12:00:01.150000+0000","flow_id":4,"event_type":"flow","src_ip":"10.10.10.20","src_port":40125,"dest_ip":"10.10.10.30","dest_port":99999,"proto":"TCP"}
+{"timestamp":"2025-11-20T12:00:01.160000+0000","event_type":"dns","src_ip":"10.10.10.20","dest_ip":"10.10.10.30","dest_port":53,"proto":"UDP"}
+{"timestamp":"2025-11-20T12:00:01.170000+0000","flow_id":6,"event_type":"flow","src_ip":"10.10.10.20","src_port":40127,"dest_ip":"10.10.10.30","dest_port":22,"proto":"TCP","flow":{"pkts_toserver":1,"pkts_toclient":0,"bytes_toserver":74,"bytes_toclient":0,"start":"2025-11-20T12:00:01.170000+0000","end":"2025-11-20T12:00:01.170000+0000"}}

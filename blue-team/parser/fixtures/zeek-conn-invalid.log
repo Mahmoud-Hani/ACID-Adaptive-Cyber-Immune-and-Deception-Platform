@@ -1,0 +1,7 @@
+{"ts":1763640001.12,"uid":"C1","id.orig_h":"10.10.10.20","id.orig_p":40122,"id.resp_h":"10.10.10.30","id.resp_p":21,"proto":"tcp","conn_state":"S0"}
+{"ts":1763640001.13,"uid":"C2","id.orig_h":"10.10.10.20"
+{"ts":1763640001.14,"uid":"C3","id.orig_p":40124,"id.resp_h":"10.10.10.30","id.resp_p":23,"proto":"tcp","conn_state":"S0"}
+{"ts":1763640001.15,"uid":"C4","id.orig_h":"10.10.10.20","id.orig_p":40125,"id.resp_h":"10.10.10.30","id.resp_p":70000,"proto":"tcp","conn_state":"S0"}
+{"ts":1763640001.16,"uid":"C5","id.orig_h":"10.10.10.20","id.orig_p":8,"id.resp_h":"10.10.10.30","id.resp_p":0,"proto":"icmp","conn_state":"OTH"}
+{"ts":1763640001.17,"uid":"C6","id.orig_h":"not-an-ip","id.orig_p":40126,"id.resp_h":"10.10.10.30","id.resp_p":80,"proto":"tcp","conn_state":"S0"}
+{"ts":1763640001.18,"uid":"C7","id.orig_h":"10.10.10.20","id.orig_p":40127,"id.resp_h":"10.10.10.30","id.resp_p":443,"proto":"tcp","conn_state":"S0"}
