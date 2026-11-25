@@ -16,7 +16,7 @@ def split(results):
 
 def test_valid_zeek_fixture_has_no_rejects_or_skips():
     events, rejected, skipped = split(
-        list(process_zeek_conn(FIXTURES / "zeek-conn-portscan.log", "zeek-01"))
+        list(process_zeek_conn(FIXTURES / "zeek-conn-portscan.log", "zeek-01", dataset="fixture"))
     )
     assert len(events) == 5
     assert rejected == {} and skipped == []
@@ -24,7 +24,7 @@ def test_valid_zeek_fixture_has_no_rejects_or_skips():
 
 def test_valid_suricata_sample_skips_non_flow_events():
     events, rejected, skipped = split(
-        list(process_suricata_eve(FIXTURES / "suricata-eve-sample.json", "suricata-01"))
+        list(process_suricata_eve(FIXTURES / "suricata-eve-sample.json", "suricata-01", dataset="fixture"))
     )
     assert len(events) == 3
     assert rejected == {}
@@ -33,7 +33,7 @@ def test_valid_suricata_sample_skips_non_flow_events():
 
 def test_zeek_invalid_fixture_never_stops_the_run():
     events, rejected, skipped = split(
-        list(process_zeek_conn(FIXTURES / "zeek-conn-invalid.log", "zeek-01"))
+        list(process_zeek_conn(FIXTURES / "zeek-conn-invalid.log", "zeek-01", dataset="fixture"))
     )
     assert [e.destination_port for e in events] == [21, 443]
     assert sorted(rejected) == [2, 3, 4, 6]
@@ -46,7 +46,7 @@ def test_zeek_invalid_fixture_never_stops_the_run():
 
 def test_suricata_invalid_fixture_never_stops_the_run():
     events, rejected, skipped = split(
-        list(process_suricata_eve(FIXTURES / "suricata-eve-invalid.json", "suricata-01"))
+        list(process_suricata_eve(FIXTURES / "suricata-eve-invalid.json", "suricata-01", dataset="fixture"))
     )
     assert [e.destination_port for e in events] == [21, 22]
     assert sorted(rejected) == [2, 3, 4]
