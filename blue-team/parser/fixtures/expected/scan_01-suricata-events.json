@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "source": "suricata",
+    "dataset": "scan_01",
+    "sensor_id": "suricata-01",
+    "events": 3,
+    "rejected": 0,
+    "skipped": 2
+  },
+  "events": [
+    {
+      "timestamp": "2025-11-20T12:00:01.120000Z",
+      "event_type": "network_connection",
+      "source_ip": "10.10.10.20",
+      "destination_ip": "10.10.10.30",
+      "destination_port": 21,
+      "protocol": "tcp",
+      "sensor_id": "suricata-01",
+      "source_port": 40122,
+      "duration": 0.0,
+      "source_packets": 1,
+      "destination_packets": 0,
+      "source_bytes": 74,
+      "destination_bytes": 0,
+      "event_id": "evt_88c2207f0fc04b413747a290bface40e",
+      "raw_ref": "suricata://scan_01/eve.json#line-1",
+      "event_version": "1.0"
+    },
+    {
+      "timestamp": "2025-11-20T12:00:01.130000Z",
+      "event_type": "network_connection",
+      "source_ip": "10.10.10.20",
+      "destination_ip": "10.10.10.30",
+      "destination_port": 22,
+      "protocol": "tcp",
+      "sensor_id": "suricata-01",
+      "source_port": 40123,
+      "duration": 0.0,
+      "source_packets": 1,
+      "destination_packets": 0,
+      "source_bytes": 74,
+      "destination_bytes": 0,
+      "event_id": "evt_910c14b2c0ec6160a5d6058bbda87ebc",
+      "raw_ref": "suricata://scan_01/eve.json#line-2",
+      "event_version": "1.0"
+    },
+    {
+      "timestamp": "2025-11-20T12:00:01.140000Z",
+      "event_type": "network_connection",
+      "source_ip": "10.10.10.20",
+      "destination_ip": "10.10.10.30",
+      "destination_port": 23,
+      "protocol": "tcp",
+      "sensor_id": "suricata-01",
+      "source_port": 40124,
+      "duration": 0.0004,
+      "source_packets": 1,
+      "destination_packets": 1,
+      "source_bytes": 74,
+      "destination_bytes": 60,
+      "event_id": "evt_678ea7cc2800d934907dab1972debadf",
+      "raw_ref": "suricata://scan_01/eve.json#line-3",
+      "event_version": "1.0"
+    }
+  ],
+  "rejected": [],
+  "skipped": [
+    {
+      "line_number": 4,
+      "reason": "unsupported event_type 'alert'"
+    },
+    {
+      "line_number": 5,
+      "reason": "unsupported event_type 'stats'"
+    }
+  ]
+}
