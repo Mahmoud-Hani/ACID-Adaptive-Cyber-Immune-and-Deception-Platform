@@ -1,0 +1,21 @@
+{
+  "mapping_version": "1.0",
+  "detection_id": "det_0f1e2d3c4b5a69788796a5b4c3d2e1f0",
+  "detection_type": "ssh_bruteforce",
+  "status": "mapped",
+  "attack_version": "v18",
+  "mapped_at": "2026-11-20T12:06:12.000000Z",
+  "mapped_by": "rule",
+  "techniques": [
+    {
+      "technique_id": "T1110.001",
+      "technique_name": "Password Guessing",
+      "tactic_id": "TA0006",
+      "tactic_name": "Credential Access",
+      "confidence": "medium",
+      "reason": "Repeated failed SSH authentication attempts from one source to one account within a short window.",
+      "evidence_event_ids": ["evt_9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e"],
+      "validation_status": "pending_analyst_validation"
+    }
+  ]
+}

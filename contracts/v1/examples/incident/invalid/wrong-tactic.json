@@ -1,0 +1,52 @@
+{
+  "incident_id": "inc_2b3c4d5e6f708192a3b4c5d6e7f8091a",
+  "incident_version": "1.0",
+  "title": "SSH brute force with wrong tactic",
+  "detection_types": [ "ssh_bruteforce" ],
+  "status": "new",
+  "severity": "high",
+  "explanation": "Technique mapped to the wrong tactic.",
+  "source_ip": "10.10.10.20",
+  "target_ips": [ "10.10.10.30" ],
+  "first_seen": "2026-11-20T12:05:01.000000Z",
+  "last_seen": "2026-11-20T12:05:58.000000Z",
+  "created_at": "2026-11-20T12:06:11.000000Z",
+  "updated_at": "2026-11-20T12:06:13.000000Z",
+  "detection_ids": [ "det_0f1e2d3c4b5a69788796a5b4c3d2e1f0" ],
+  "evidence": [
+    {
+      "event_id": "evt_9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e",
+      "raw_ref": "zeek://scan_02/ssh.log#line-101",
+      "pcap_reference": "pcap/scan_02.pcap"
+    }
+  ],
+  "timeline": [
+    {
+      "timestamp": "2026-11-20T12:06:10.000000Z",
+      "entry_type": "detection",
+      "ref_id": "det_0f1e2d3c4b5a69788796a5b4c3d2e1f0",
+      "description": "SSH brute force detected."
+    }
+  ],
+  "techniques": [
+    {
+      "technique_id": "T1110.001",
+      "technique_name": "Password Guessing",
+      "tactic_id": "TA0007",
+      "tactic_name": "Discovery",
+      "confidence": "medium",
+      "reason": "Wrong tactic for this technique.",
+      "evidence_event_ids": [ "evt_9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e" ],
+      "validation_status": "pending_analyst_validation"
+    }
+  ],
+  "attack_version": "v18",
+  "cti": {
+    "status": "offline",
+    "enrichment_id": null,
+    "source": null,
+    "tags": [],
+    "confidence": null,
+    "fetched_at": null
+  }
+}

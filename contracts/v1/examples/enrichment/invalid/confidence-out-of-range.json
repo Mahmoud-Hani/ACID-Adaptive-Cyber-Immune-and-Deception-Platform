@@ -1,0 +1,10 @@
+{
+  "indicator": "10.10.10.20",
+  "match": true,
+  "source": "offline-fixture",
+  "tags": [ "scanner" ],
+  "confidence": 1.5,
+  "fetched_at": "2026-11-20T12:00:00Z",
+  "stale": false,
+  "error": null
+}

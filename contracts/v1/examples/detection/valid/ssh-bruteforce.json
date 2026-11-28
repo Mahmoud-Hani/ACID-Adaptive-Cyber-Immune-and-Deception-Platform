@@ -1,0 +1,20 @@
+{
+  "detection_id": "det_0f1e2d3c4b5a69788796a5b4c3d2e1f0",
+  "detection_version": "1.0",
+  "detection_type": "ssh_bruteforce",
+  "detected_at": "2026-11-20T12:06:10.000000Z",
+  "source_ip": "10.10.10.20",
+  "destination_ips": [ "10.10.10.30" ],
+  "destination_ports": [ 22 ],
+  "window_start": "2026-11-20T12:05:00.000000Z",
+  "window_end": "2026-11-20T12:06:00.000000Z",
+  "metric": "failed_auth_attempts",
+  "observed_value": 12,
+  "threshold": 5,
+  "severity": "high",
+  "explanation": "10.10.10.20 made 12 failed SSH authentication attempts to 10.10.10.30 within 60 seconds (threshold: 5).",
+  "detector_version": "ssh_bruteforce-0.1",
+  "evidence_event_ids": [
+    "evt_9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e"
+  ]
+}

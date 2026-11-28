@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acid.local/contracts/v1/incident.schema.json",
+  "title": "ACID Incident v1",
+  "description": "Correlated incident created by the Backend from one or more Detections. Read by the Dashboard. Every field is always present; not-applicable values are null.",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "incident_version",
+    "title",
+    "detection_types",
+    "status",
+    "severity",
+    "explanation",
+    "source_ip",
+    "target_ips",
+    "first_seen",
+    "last_seen",
+    "created_at",
+    "updated_at",
+    "detection_ids",
+    "evidence",
+    "timeline",
+    "techniques",
+    "attack_version",
+    "cti"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^inc_[0-9a-f]{32}$"
+    },
+    "incident_version": { "const": "1.0" },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "detection_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [ "port_scan", "ssh_bruteforce" ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [ "new", "investigating", "resolved", "false_positive" ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [ "low", "medium", "high", "critical" ]
+    },
+    "explanation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "Why text shown to the analyst."
+    },
+    "source_ip": { "$ref": "#/$defs/ipv4" },
+    "target_ips": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ipv4" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "first_seen": { "$ref": "#/$defs/utc_timestamp" },
+    "last_seen": { "$ref": "#/$defs/utc_timestamp" },
+    "created_at": { "$ref": "#/$defs/utc_timestamp" },
+    "updated_at": { "$ref": "#/$defs/utc_timestamp" },
+    "detection_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^det_[0-9a-f]{32}$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidence_item" },
+      "minItems": 1
+    },
+    "timeline": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/timeline_entry" },
+      "minItems": 1
+    },
+    "techniques": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/attack_mapping" },
+      "description": "Validated ATT&CK suggestions. Empty when no mapping is supported by evidence yet."
+    },
+    "attack_version": {
+      "type": [ "string", "null" ],
+      "pattern": "^v\\d+(\\.\\d+)?$",
+      "description": "Pinned ATT&CK version used for mapping. Null when techniques is empty."
+    },
+    "cti": { "$ref": "#/$defs/cti_summary" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "techniques": { "minItems": 1 } }
+      },
+      "then": {
+        "properties": { "attack_version": { "type": "string" } }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ipv4": {
+      "type": "string",
+      "format": "ipv4",
+      "pattern": "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$"
+    },
+    "utc_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9a-f]{32}$"
+    },
+    "evidence_item": {
+      "type": "object",
+      "required": [ "event_id", "raw_ref", "pcap_reference" ],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/event_id" },
+        "raw_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "pcap_reference": {
+          "type": [ "string", "null" ],
+          "maxLength": 512
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeline_entry": {
+      "type": "object",
+      "required": [ "timestamp", "entry_type", "ref_id", "description" ],
+      "properties": {
+        "timestamp": { "$ref": "#/$defs/utc_timestamp" },
+        "entry_type": {
+          "type": "string",
+          "enum": [ "event", "detection", "mapping", "enrichment", "status_change" ]
+        },
+        "ref_id": {
+          "type": [ "string", "null" ],
+          "maxLength": 64,
+          "description": "ID of the related item (event, detection, technique, enrichment)."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "attack_mapping": {
+      "type": "object",
+      "required": [
+        "technique_id",
+        "technique_name",
+        "tactic_id",
+        "tactic_name",
+        "confidence",
+        "reason",
+        "evidence_event_ids",
+        "validation_status"
+      ],
+      "properties": {
+        "technique_id": {
+          "type": "string",
+          "enum": [ "T1046", "T1110", "T1110.001" ]
+        },
+        "technique_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tactic_id": {
+          "type": "string",
+          "enum": [ "TA0006", "TA0007" ]
+        },
+        "tactic_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [ "low", "medium", "high" ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "evidence_event_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/event_id" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "validation_status": {
+          "type": "string",
+          "enum": [ "pending_analyst_validation", "approved", "rejected" ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "technique_id": { "const": "T1046" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Network Service Discovery" },
+              "tactic_id": { "const": "TA0007" },
+              "tactic_name": { "const": "Discovery" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "technique_id": { "const": "T1110" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Brute Force" },
+              "tactic_id": { "const": "TA0006" },
+              "tactic_name": { "const": "Credential Access" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "technique_id": { "const": "T1110.001" } } },
+          "then": {
+            "properties": {
+              "technique_name": { "const": "Password Guessing" },
+              "tactic_id": { "const": "TA0006" },
+              "tactic_name": { "const": "Credential Access" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "cti_summary": {
+      "type": "object",
+      "required": [ "status", "enrichment_id", "source", "tags", "confidence", "fetched_at" ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [ "pending", "hit", "no_hit", "offline", "stale" ],
+          "description": "A CTI failure never blocks or deletes the incident."
+        },
+        "enrichment_id": {
+          "type": [ "string", "null" ],
+          "pattern": "^enr_[0-9a-f]{32}$",
+          "description": "Backend ID of the stored Enrichment v1 record. Null while pending or when no response was received."
+        },
+        "source": {
+          "type": [ "string", "null" ],
+          "maxLength": 64
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "uniqueItems": true
+        },
+        "confidence": {
+          "type": [ "number", "null" ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fetched_at": {
+          "anyOf": [
+            { "$ref": "#/$defs/utc_timestamp" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

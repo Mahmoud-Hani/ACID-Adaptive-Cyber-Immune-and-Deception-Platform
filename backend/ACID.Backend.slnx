@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="app/ACID.API/ACID.API.csproj" />
+  <Project Path="app/ACID.Application/ACID.Application.csproj" />
+  <Project Path="app/ACID.Domain/ACID.Domain.csproj" Id="0e9261c4-8424-4397-975f-2eee55cff961" />
+  <Project Path="app/ACID.Infrastructure/ACID.Infrastructure.csproj" />
 </Solution>
